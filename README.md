@@ -2,9 +2,6 @@
 
 # TextScope — Text Analyzer
 
-> **Learning Journey Project · Boot.dev**
-> Developed through the Boot.dev curriculum and extended through independent work.
-
 **Explore the words, letters, and vocabulary inside your books.**
 
 TextScope reads text one line at a time, preserves the original word and letter counts, and adds vocabulary rankings, reading-time estimates, and multi-book comparisons. Export readable text, structured JSON, or a CSV summary without third-party dependencies.
@@ -100,3 +97,6 @@ Reading files, working with counters and dictionaries, deterministic sorting, Un
 ---
 
 Built by **[Abdulrahman M. Yaqyn](https://yaqyn.github.io/folio-static-site/)**.
+
+> **Learning Journey Project · Boot.dev**
+> Developed through the Boot.dev curriculum and extended through independent work.
