@@ -2,7 +2,7 @@
 
 # TextScope — Text Analyzer
 
-> **Learning Journey Projects · Boot.dev**
+> **Learning Journey Project · Boot.dev**
 > A student project developed through the Boot.dev curriculum and extended through hands-on practice.
 
 **Explore the words, letters, and vocabulary inside your books.**
@@ -46,7 +46,7 @@ Run `./launch` to analyze the bundled Frankenstein book, or pass one or more fil
 | `--format text/json/csv` | Readable report, full structured analysis, or summary rows |
 | `--output PATH` | Save instead of printing; creates parent directories |
 
-### Counting rules
+### <img src="readme-assets/learn.svg" width="20" height="20" alt=""> Counting rules
 
 - **Word count:** whitespace-separated tokens, preserving the course definition.
 - **Letters:** lowercase character counts, alphabetic characters only, sorted by frequency and alphabetically on ties.
@@ -74,7 +74,7 @@ Input failures return status 1 with a concise error; invalid CLI arguments retur
 
 Reading files, working with counters and dictionaries, deterministic sorting, Unicode normalization, dataclasses, CLI design, and structured exports.
 
-## Verify
+## <img src="readme-assets/verify.svg" width="24" height="24" alt=""> Verify
 
 ```bash
 python3 -m unittest -v
