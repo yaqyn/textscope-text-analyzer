@@ -19,7 +19,7 @@ TextScope reads text one line at a time, preserves the original word and letter 
 
 Requires **Python 3.10+**. No third-party dependencies or API keys.
 
-Run the commands below from the project checkout.
+Clone with `git clone https://github.com/yaqyn/textscope-text-analyzer.git`, then run the commands below from `textscope-text-analyzer/`.
 
 ## <img src="readme-assets/icons/launch.svg" width="24" height="24" alt=""> Quick start
 
@@ -27,18 +27,20 @@ Run the commands below from the project checkout.
 ./launch
 ```
 
+![Original word and character report for the bundled Frankenstein text](readme-assets/report.png)
+
+<sub>The original counts remain unchanged; current reports also include insights and top words.</sub>
+
+Run `./launch` to analyze the bundled Frankenstein book, or pass one or more file paths. The launcher works from another directory when invoked by absolute path. The direct command remains `python3 main.py books/frankenstein.txt`.
+
+## <img src="readme-assets/icons/usage.svg" width="24" height="24" alt=""> Usage
+
 Try the other bundled books:
 
 ```bash
 ./launch books/mobydick.txt
 ./launch books/prideandprejudice.txt
 ```
-
-![Original word and character report for the bundled Frankenstein text](readme-assets/report.png)
-
-<sub>The original counts remain unchanged; current reports also include insights and top words.</sub>
-
-Run `./launch` to analyze the bundled Frankenstein book, or pass one or more file paths. The launcher works from another directory when invoked by absolute path. The direct command remains `python3 main.py books/frankenstein.txt`.
 
 ```bash
 ./launch books/frankenstein.txt books/mobydick.txt --top 15 --min-word-length 5 --exclude their
@@ -56,7 +58,7 @@ Run `./launch` to analyze the bundled Frankenstein book, or pass one or more fil
 | `--format text/json/csv` | Readable report, full structured analysis, or summary rows |
 | `--output PATH` | Save instead of printing; creates parent directories |
 
-### <img src="readme-assets/icons/requirements.svg" width="20" height="20" alt=""> Counting rules
+### <img src="readme-assets/icons/usage.svg" width="20" height="20" alt=""> Counting rules
 
 - **Word count:** whitespace-separated tokens, preserving the course definition.
 - **Letters:** lowercase character counts, alphabetic characters only, sorted by frequency and alphabetically on ties.
