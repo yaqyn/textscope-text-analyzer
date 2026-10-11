@@ -11,9 +11,20 @@ TextScope reads text one line at a time, preserves the original word and letter 
 
 [Analyze a book](#-quick-start)
 
-## <img src="readme-assets/icons/launch.svg" width="24" height="24" alt=""> Quick start
+## <img src="readme-assets/icons/features.svg" width="24" height="24" alt=""> Features
+
+- Count words and letters and rank normalized vocabulary.
+- Compare several books in one report.
+- Export text, JSON, or CSV without third-party dependencies.
+- Write reports atomically and reject overwriting an input book.
+
+## <img src="readme-assets/icons/installation.svg" width="24" height="24" alt=""> Installation
 
 Requires **Python 3.10+**. No third-party dependencies or API keys.
+
+Run the commands below from the project checkout.
+
+## <img src="readme-assets/icons/launch.svg" width="24" height="24" alt=""> Quick start
 
 ```bash
 ./launch
@@ -60,13 +71,6 @@ Run `./launch` to analyze the bundled Frankenstein book, or pass one or more fil
 JSON always contains a list of book analyses, including letter counts and top words. CSV contains one summary row per book. Multiple-book text reports include a comparison table. The file is streamed by line; memory use grows with distinct vocabulary and the longest line rather than the full book.
 
 Input failures return status 1 with a concise error; invalid CLI arguments return status 2. Use `--encoding` when a text file is not UTF-8. Every input must succeed before a report is written. Reports are replaced atomically, and the CLI rejects using an input book as the output path.
-
-## <img src="readme-assets/icons/features.svg" width="24" height="24" alt=""> Features
-
-- Count words and letters and rank normalized vocabulary.
-- Compare several books in one report.
-- Export text, JSON, or CSV without third-party dependencies.
-- Write reports atomically and reject overwriting an input book.
 
 ## <img src="readme-assets/icons/architecture.svg" width="24" height="24" alt=""> Architecture
 
