@@ -9,7 +9,7 @@
 
 TextScope reads text one line at a time, preserves the original word and letter counts, and adds vocabulary rankings, reading-time estimates, and multi-book comparisons. Export readable text, structured JSON, or a CSV summary without third-party dependencies.
 
-[Analyze a book](#quick-start)
+[Analyze a book](#-quick-start)
 
 ## <img src="readme-assets/icons/launch.svg" width="24" height="24" alt=""> Quick start
 
