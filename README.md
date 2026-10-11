@@ -3,13 +3,15 @@
 # TextScope — Text Analyzer
 
 > **Learning Journey Project · Boot.dev**
-> A student project developed through the Boot.dev curriculum and extended through hands-on practice.
+> Developed through the Boot.dev curriculum and extended through independent work.
 
 **Explore the words, letters, and vocabulary inside your books.**
 
 TextScope reads text one line at a time, preserves the original word and letter counts, and adds vocabulary rankings, reading-time estimates, and multi-book comparisons. Export readable text, structured JSON, or a CSV summary without third-party dependencies.
 
-## <img src="readme-assets/run.svg" width="24" height="24" alt=""> Analyze a book
+[Analyze a book](#quick-start)
+
+## <img src="readme-assets/icons/launch.svg" width="24" height="24" alt=""> Quick start
 
 Requires **Python 3.10+**. No third-party dependencies or API keys.
 
@@ -46,7 +48,7 @@ Run `./launch` to analyze the bundled Frankenstein book, or pass one or more fil
 | `--format text/json/csv` | Readable report, full structured analysis, or summary rows |
 | `--output PATH` | Save instead of printing; creates parent directories |
 
-### <img src="readme-assets/learn.svg" width="20" height="20" alt=""> Counting rules
+### <img src="readme-assets/icons/requirements.svg" width="20" height="20" alt=""> Counting rules
 
 - **Word count:** whitespace-separated tokens, preserving the course definition.
 - **Letters:** lowercase character counts, alphabetic characters only, sorted by frequency and alphabetically on ties.
@@ -59,7 +61,16 @@ JSON always contains a list of book analyses, including letter counts and top wo
 
 Input failures return status 1 with a concise error; invalid CLI arguments return status 2. Use `--encoding` when a text file is not UTF-8. Every input must succeed before a report is written. Reports are replaced atomically, and the CLI rejects using an input book as the output path.
 
-## <img src="readme-assets/design.svg" width="24" height="24" alt=""> From text to statistics
+## <img src="readme-assets/icons/features.svg" width="24" height="24" alt=""> Features
+
+- Count words and letters and rank normalized vocabulary.
+- Compare several books in one report.
+- Export text, JSON, or CSV without third-party dependencies.
+- Write reports atomically and reject overwriting an input book.
+
+## <img src="readme-assets/icons/architecture.svg" width="24" height="24" alt=""> Architecture
+
+The CLI reads text, computes counts and vocabulary, and renders or exports the report.
 
 ![TextScope workflow: read, count, rank, print](readme-assets/workflow.svg)
 
@@ -70,11 +81,7 @@ Input failures return status 1 with a concise error; invalid CLI arguments retur
 | `books/` | Three bundled books to explore |
 | `test_textscope.py` | Counting, Unicode, CLI, exports, and launcher checks |
 
-## <img src="readme-assets/learn.svg" width="24" height="24" alt=""> What this project teaches
-
-Reading files, working with counters and dictionaries, deterministic sorting, Unicode normalization, dataclasses, CLI design, and structured exports.
-
-## <img src="readme-assets/verify.svg" width="24" height="24" alt=""> Verify
+## <img src="readme-assets/icons/verification.svg" width="24" height="24" alt=""> Verification
 
 ```bash
 python3 -m unittest -v
@@ -82,6 +89,10 @@ python3 -m unittest -v
 
 The tests need no external services. They compare all bundled books against the original counting functions, test the launcher from another directory, and exercise empty text, Unicode, filters, encoding errors, multiple-book exports, and atomic-write recovery. GitHub Actions runs the checks on Python 3.10 and 3.13.
 
+## <img src="readme-assets/icons/learning.svg" width="24" height="24" alt=""> Learning context
+
+Reading files, working with counters and dictionaries, deterministic sorting, Unicode normalization, dataclasses, CLI design, and structured exports.
+
 ---
 
-Built by **[Abdulrahman M. Yaqyn](https://yaqyn.github.io/folio-static-site/)** through the [Boot.dev](https://www.boot.dev) curriculum.
+Built by **[Abdulrahman M. Yaqyn](https://yaqyn.github.io/folio-static-site/)**.
