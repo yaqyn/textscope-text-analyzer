@@ -84,4 +84,4 @@ The tests need no external services. They compare all bundled books against the 
 
 ---
 
-Built by **[Abdulrahman M. Yaqyn](https://yaqyn.dev)** through the [Boot.dev](https://www.boot.dev) curriculum.
+Built by **[Abdulrahman M. Yaqyn](https://yaqyn.github.io/folio-static-site/)** through the [Boot.dev](https://www.boot.dev) curriculum.
