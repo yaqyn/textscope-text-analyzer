@@ -1,4 +1,4 @@
-![TextScope — letters rising from an open book in an engraved printing workshop](readme-assets/cover-renamed.png)
+![TextScope — letters rising from an open book in an engraved printing workshop](readme-assets/cover-renamed.webp)
 
 # TextScope — Text Analyzer
 
