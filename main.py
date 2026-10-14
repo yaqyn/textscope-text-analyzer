@@ -192,7 +192,7 @@ def main(argv=None):
         return 0
     except BrokenPipeError:
         return 0
-    except OSError as error:
+    except (OSError, UnicodeError) as error:
         print(f"Error writing report: {error}", file=sys.stderr)
         return 1
 

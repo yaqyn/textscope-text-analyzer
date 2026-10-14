@@ -97,6 +97,15 @@ class TextScopeTests(unittest.TestCase):
             self.assertEqual(main([str(self.book)]), 1)
             self.assertIn("decode", error.getvalue())
 
+    def test_output_encoding_failure_returns_error(self):
+        with (
+            patch("main.sys.stdout.write", side_effect=UnicodeEncodeError(
+                "ascii", "caf\u00e9", 3, 4, "ordinal not in range")),
+            contextlib.redirect_stderr(io.StringIO()) as error,
+        ):
+            self.assertEqual(main([str(self.book)]), 1)
+        self.assertIn("Error writing report", error.getvalue())
+
     def test_input_cannot_be_overwritten(self):
         before = self.book.read_bytes()
         with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
