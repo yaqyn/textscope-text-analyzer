@@ -4,6 +4,7 @@ from collections import Counter
 from dataclasses import asdict, dataclass
 import math
 import re
+import unicodedata
 
 # Vocabulary tokens contain Unicode letters and optional internal apostrophes.
 WORD_PATTERN = re.compile(r"[^\W\d_]+(?:['’][^\W\d_]+)*", re.UNICODE)
@@ -49,7 +50,7 @@ def analyze_book(
     """Read one line at a time; retain character counts and vocabulary frequencies.
 
     Word totals preserve whitespace semantics. Vocabulary rankings normalize
-    Unicode letter tokens with casefold, treating curly and straight apostrophes
+    Unicode letter tokens with NFC and casefold, treating curly and straight apostrophes
     equivalently. Exclusions affect rankings only, not totals or vocabulary size.
     """
     if top < 1 or min_word_length < 1 or reading_wpm < 1:
@@ -63,14 +64,18 @@ def analyze_book(
             character_count += len(line)
             characters.update(line.lower())
             vocabulary.update(
-                word.casefold().replace("’", "'") for word in WORD_PATTERN.findall(line)
+                word.casefold().replace("’", "'")
+                for word in WORD_PATTERN.findall(unicodedata.normalize("NFC", line))
             )
     letter_counts = [
         (char, count)
         for char, count in chars_dict_sorted_list(characters)
         if char.isalpha()
     ]
-    excluded = {word.casefold().replace("’", "'") for word in exclude}
+    excluded = {
+        unicodedata.normalize("NFC", word).casefold().replace("’", "'")
+        for word in exclude
+    }
     ranked = sorted(
         (
             (word, count)

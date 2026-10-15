@@ -59,6 +59,16 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.reading_minutes, 0)
         self.assertIn("No words match", render_report([book], "text"))
 
+    def test_canonically_equivalent_vocabulary_and_exclusions(self):
+        text = "café cafe\u0301"
+        self.book.write_text(text, encoding="utf-8")
+        book = analyze_book(self.book)
+        self.assertEqual(book.unique_words, 1)
+        self.assertEqual(book.top_words, [{"word": "café", "count": 2}])
+        self.assertEqual(book.character_count, len(text))
+        self.assertEqual(book.word_count, 2)
+        self.assertEqual(analyze_book(self.book, exclude=["cafe\u0301"]).top_words, [])
+
     def test_reading_time_rounds_up(self):
         self.assertEqual(analyze_book(self.book, reading_wpm=3).reading_minutes, 3)
 

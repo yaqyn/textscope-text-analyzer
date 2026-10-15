@@ -62,7 +62,7 @@ Try the other bundled books:
 
 - **Word count:** whitespace-separated tokens, preserving the course definition.
 - **Letters:** lowercase character counts, alphabetic characters only, sorted by frequency and alphabetically on ties.
-- **Vocabulary:** Unicode letter tokens, with optional internal apostrophes. Casefolding merges forms such as `Straße` and `STRASSE`; curly and straight apostrophes are equivalent. Numbers are excluded. This is a simple tokenizer, not a language-specific word segmenter.
+- **Vocabulary:** Unicode letter tokens, with optional internal apostrophes. NFC normalization merges composed and decomposed accents. Casefolding merges forms such as `Straße` and `STRASSE`; curly and straight apostrophes are equivalent. Numbers are excluded. This is a simple tokenizer, not a language-specific word segmenter.
 - **Vocabulary percentage:** unique normalized vocabulary divided by all letter tokens. Filters affect rankings only.
 - **Reading time:** whitespace word count divided by the selected words per minute, rounded up; empty books take zero minutes.
 - **Characters and lines:** decoded code points and physical text lines, preserving line endings. No sentence/readability model is implied.
