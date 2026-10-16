@@ -52,7 +52,7 @@ Try the other bundled books:
 | --- | --- |
 | `--top N` | Number of ranked words; default 10 |
 | `--min-word-length N` | Minimum length for word rankings; default 1 |
-| `--exclude WORD` | Exclude a word from rankings; repeat for several words |
+| `--exclude WORD` | Exclude a word from rankings; repeat for several words, or use repeatable `--exclude-file PATH` for UTF-8 files with one word per line |
 | `--reading-wpm N` | Reading-speed estimate; default 250 words per minute |
 | `--encoding NAME` | Input encoding; default UTF-8 |
 | `--format text/json/csv` | Readable report, full structured analysis, or summary rows |
@@ -69,7 +69,7 @@ Try the other bundled books:
 
 JSON always contains a list of book analyses, including letter counts and top words. CSV contains one summary row per book. Multiple-book text reports include a comparison table. The file is streamed by line; memory use grows with distinct vocabulary and the longest line rather than the full book.
 
-Input and output encoding failures return status 1 with a concise error; invalid CLI arguments return status 2. Use `--encoding` when a text file is not UTF-8. Every input must succeed before a report is written. Reports are replaced atomically, and the CLI rejects using an input book as the output path.
+Input and output encoding failures return status 1 with a concise error; invalid CLI arguments return status 2. Use `--encoding` when a text file is not UTF-8. Every input must succeed before a report is written. Reports are replaced atomically, and the CLI rejects using an input book or exclusion file as the output path.
 
 ## <img src="readme-assets/icons/architecture.svg" width="24" height="24" alt=""> Architecture
 

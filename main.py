@@ -159,11 +159,24 @@ def main(argv=None):
         help="Exclude a word from rankings; repeatable",
     )
     parser.add_argument("--reading-wpm", type=positive_int, default=250)
+    parser.add_argument(
+        "--exclude-file", action="append", default=[], type=Path,
+        help="UTF-8 file of words to exclude, one per line; repeatable",
+    )
     args = parser.parse_args(argv)
+    try:
+        for path in args.exclude_file:
+            args.exclude.extend(
+                word.strip() for word in path.read_text(encoding="utf-8").splitlines()
+                if word.strip()
+            )
+    except (OSError, UnicodeError) as error:
+        print(f"Error reading exclusions: {error}", file=sys.stderr)
+        return 1
     if args.output and any(
-        args.output.resolve() == book.resolve() for book in args.books
+        args.output.resolve() == path.resolve() for path in [*args.books, *args.exclude_file]
     ):
-        parser.error("Output must differ from every input book")
+        parser.error("Output must differ from every input book or exclusion file")
     books = []
     for path in args.books:
         try:

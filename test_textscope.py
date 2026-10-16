@@ -59,6 +59,37 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.reading_minutes, 0)
         self.assertIn("No words match", render_report([book], "text"))
 
+    def test_exclusion_files_combine_with_inline_filters(self):
+        stopwords = self.root / "stopwords.txt"
+        stopwords.write_text("HELLO\n\n", encoding="utf-8")
+        more = self.root / "more.txt"
+        more.write_text("cafe\u0301\n", encoding="utf-8")
+        output = self.root / "report.json"
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(main([str(self.book), "--exclude-file", str(stopwords),
+                                   "--exclude-file", str(more),
+                                   "--exclude", "don't", "--format", "json",
+                                   "--output", str(output)]), 0)
+        result = json.loads(output.read_text())[0]
+        self.assertEqual(result["top_words"], [])
+        self.assertEqual(result["word_count"], 7)
+        self.assertEqual(result["unique_words"], 3)
+
+    def test_missing_exclusion_file_preserves_output(self):
+        output = self.root / "report.txt"
+        output.write_text("existing")
+        with contextlib.redirect_stderr(io.StringIO()):
+            self.assertEqual(main([str(self.book), "--exclude-file",
+                                   str(self.root / "missing"), "--output", str(output)]), 1)
+        self.assertEqual(output.read_text(), "existing")
+
+    def test_exclusion_file_cannot_be_overwritten(self):
+        stopwords = self.root / "stopwords.txt"
+        stopwords.write_text("hello")
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            main([str(self.book), "--exclude-file", str(stopwords), "--output", str(stopwords)])
+        self.assertEqual(stopwords.read_text(), "hello")
+
     def test_canonically_equivalent_vocabulary_and_exclusions(self):
         text = "café cafe\u0301"
         self.book.write_text(text, encoding="utf-8")
