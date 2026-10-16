@@ -19,7 +19,9 @@ def get_book_text(path, encoding="utf-8"):
 
 def print_report(book_path, wc, letters_sort):
     """Retain the original course report helper."""
-    print(f"============ TEXTSCOPE ============\nAnalyzing book found at {book_path}...")
+    print(
+        f"============ TEXTSCOPE ============\nAnalyzing book found at {book_path}..."
+    )
     print(f"----------- Word Count ----------\nFound {wc} total words")
     print("--------- Character Count -------")
     for letter, count in letters_sort:
@@ -143,7 +145,7 @@ def main(argv=None):
         description="Count, rank, and compare plain-text books"
     )
     parser.add_argument(
-        "books", nargs="+", type=Path, help="One or more plain-text files"
+        "books", nargs="*", type=Path, help="One or more plain-text files"
     )
     parser.add_argument("--format", choices=["text", "json", "csv"], default="text")
     parser.add_argument(
@@ -160,21 +162,81 @@ def main(argv=None):
     )
     parser.add_argument("--reading-wpm", type=positive_int, default=250)
     parser.add_argument(
-        "--exclude-file", action="append", default=[], type=Path,
+        "--exclude-file",
+        action="append",
+        default=[],
+        type=Path,
         help="UTF-8 file of words to exclude, one per line; repeatable",
     )
+    parser.add_argument(
+        "--interactive", action="store_true", help="Open the keyboard-driven library"
+    )
+    parser.add_argument(
+        "--plain",
+        action="store_true",
+        help="Print a linear report; suitable for screen readers",
+    )
+    parser.add_argument(
+        "--theme",
+        choices=["library", "paper", "contrast", "terminal"],
+        default="library",
+    )
+    parser.add_argument(
+        "--no-color",
+        action="store_true",
+        help="Use terminal defaults without color pairs",
+    )
+    parser.add_argument("--spacing", choices=["compact", "roomy"], default="compact")
     args = parser.parse_args(argv)
     try:
         for path in args.exclude_file:
             args.exclude.extend(
-                word.strip() for word in path.read_text(encoding="utf-8").splitlines()
+                word.strip()
+                for word in path.read_text(encoding="utf-8").splitlines()
                 if word.strip()
             )
     except (OSError, UnicodeError) as error:
         print(f"Error reading exclusions: {error}", file=sys.stderr)
         return 1
+    if args.interactive and (args.plain or args.output or args.format != "text"):
+        parser.error(
+            "--interactive cannot be combined with --plain, --output, or structured formats"
+        )
+    interactive = args.interactive or (
+        not args.books
+        and not args.plain
+        and not args.output
+        and args.format == "text"
+        and sys.stdin.isatty()
+        and sys.stdout.isatty()
+        and os.environ.get("TERM", "dumb") != "dumb"
+    )
+    if interactive:
+        if (
+            not sys.stdin.isatty()
+            or not sys.stdout.isatty()
+            or os.environ.get("TERM", "dumb") == "dumb"
+        ):
+            parser.error(
+                "Interactive mode needs a terminal. Use --plain for a linear report."
+            )
+        from terminal_ui import run_interactive
+
+        paths = args.books or sorted(
+            (Path(__file__).resolve().parent / "books").glob("*.txt")
+        )
+        try:
+            return run_interactive(paths, args)
+        except (ImportError, RuntimeError) as error:
+            print(
+                f"Interactive mode unavailable: {error}. Use --plain.", file=sys.stderr
+            )
+            return 1
+    if not args.books:
+        args.books = [Path(__file__).resolve().parent / "books/frankenstein.txt"]
     if args.output and any(
-        args.output.resolve() == path.resolve() for path in [*args.books, *args.exclude_file]
+        args.output.resolve() == path.resolve()
+        for path in [*args.books, *args.exclude_file]
     ):
         parser.error("Output must differ from every input book or exclusion file")
     books = []
