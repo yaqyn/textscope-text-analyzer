@@ -15,6 +15,15 @@ ROOT = Path(__file__).resolve().parent
 
 
 class TextScopeTests(unittest.TestCase):
+    def test_utf8_bom_is_not_part_of_first_excluded_word(self):
+        stopwords = self.root / "bom-stopwords.txt"
+        stopwords.write_bytes(b"\xef\xbb\xbfhello\n")
+        with contextlib.redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(main([str(self.book), "--exclude-file", str(stopwords), "--format", "json"]), 0)
+        result = json.loads(output.getvalue())[0]
+        self.assertNotIn("hello", [row["word"] for row in result["top_words"]])
+        self.assertEqual(result["unique_words"], 3)
+
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

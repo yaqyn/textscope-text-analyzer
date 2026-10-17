@@ -192,7 +192,7 @@ def main(argv=None):
         for path in args.exclude_file:
             args.exclude.extend(
                 word.strip()
-                for word in path.read_text(encoding="utf-8").splitlines()
+                for word in path.read_text(encoding="utf-8-sig").splitlines()
                 if word.strip()
             )
     except (OSError, UnicodeError) as error:
