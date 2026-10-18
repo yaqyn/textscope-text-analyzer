@@ -59,13 +59,14 @@ def analyze_book(
     word_count = line_count = character_count = 0
     with open(path, encoding=encoding, newline="") as book:
         for line in book:
+            normalized_line = unicodedata.normalize("NFC", line)
             line_count += 1
             word_count += get_book_count(line)
             character_count += len(line)
-            characters.update(line.lower())
+            characters.update(normalized_line.lower())
             vocabulary.update(
                 word.casefold().replace("’", "'")
-                for word in WORD_PATTERN.findall(unicodedata.normalize("NFC", line))
+                for word in WORD_PATTERN.findall(normalized_line)
             )
     letter_counts = [
         (char, count)

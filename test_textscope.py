@@ -109,6 +109,11 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.word_count, 2)
         self.assertEqual(analyze_book(self.book, exclude=["cafe\u0301"]).top_words, [])
 
+    def test_canonically_equivalent_letters_share_counts(self):
+        self.book.write_text("é e\u0301", encoding="utf-8")
+        letters = {row["character"]: row["count"] for row in analyze_book(self.book).letters}
+        self.assertEqual(letters, {"é": 2})
+
     def test_reading_time_rounds_up(self):
         self.assertEqual(analyze_book(self.book, reading_wpm=3).reading_minutes, 3)
 
