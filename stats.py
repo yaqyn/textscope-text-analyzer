@@ -74,7 +74,7 @@ def analyze_book(
         if char.isalpha()
     ]
     excluded = {
-        unicodedata.normalize("NFC", word).casefold().replace("’", "'")
+        unicodedata.normalize("NFC", word.strip()).casefold().replace("’", "'")
         for word in exclude
     }
     ranked = sorted(

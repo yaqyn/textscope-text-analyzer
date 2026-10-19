@@ -38,6 +38,9 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(get_book_dict("Aa!"), {"a": 2, "!": 1})
         self.assertEqual(chars_dict_sorted_list({"b": 2, "a": 2}), [("a", 2), ("b", 2)])
 
+    def test_exclusions_ignore_accidental_surrounding_whitespace(self):
+        self.assertNotIn("hello", [row["word"] for row in analyze_book(self.book, exclude=["  HELLO\t"]).top_words])
+
     def test_unicode_analysis(self):
         book = analyze_book(self.book)
         self.assertEqual(book.word_count, 7)
