@@ -193,7 +193,7 @@ def main(argv=None):
             args.exclude.extend(
                 word.strip()
                 for word in path.read_text(encoding="utf-8-sig").splitlines()
-                if word.strip()
+                if word.strip() and not word.lstrip().startswith("#")
             )
     except (OSError, UnicodeError) as error:
         print(f"Error reading exclusions: {error}", file=sys.stderr)

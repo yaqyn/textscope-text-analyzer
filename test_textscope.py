@@ -73,7 +73,7 @@ class TextScopeTests(unittest.TestCase):
 
     def test_exclusion_files_combine_with_inline_filters(self):
         stopwords = self.root / "stopwords.txt"
-        stopwords.write_text("HELLO\n\n", encoding="utf-8")
+        stopwords.write_text("# Common greeting\nHELLO\n\n", encoding="utf-8")
         more = self.root / "more.txt"
         more.write_text("cafe\u0301\n", encoding="utf-8")
         output = self.root / "report.json"

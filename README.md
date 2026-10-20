@@ -130,7 +130,7 @@ Try the other bundled books:
 | --- | --- |
 | `--top N` | Number of ranked words; default 10 |
 | `--min-word-length N` | Minimum length for word rankings; default 1 |
-| `--exclude WORD` | Exclude a word from rankings; repeat for several words, or use repeatable `--exclude-file PATH` for UTF-8 files with one word per line (an optional leading BOM is ignored) |
+| `--exclude WORD` | Exclude a word from rankings; repeat for several words, or use repeatable `--exclude-file PATH` for UTF-8 files with one word per line (`#` comments and an optional leading BOM are ignored) |
 | `--reading-wpm N` | Reading-speed estimate; default 250 words per minute |
 | `--encoding NAME` | Input encoding; default UTF-8 |
 | `--format text/json/csv` | Readable report, full structured analysis, or summary rows |
