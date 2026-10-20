@@ -64,9 +64,15 @@ def analyze_book(
             word_count += get_book_count(line)
             character_count += len(line)
             characters.update(normalized_line.lower())
+            # Python's \d omits numeric characters such as ² and ½, while
+            # \w includes them. Treat all Unicode number categories as separators.
+            vocabulary_line = "".join(
+                " " if unicodedata.category(char).startswith("N") else char
+                for char in normalized_line
+            )
             vocabulary.update(
                 word.casefold().replace("’", "'")
-                for word in WORD_PATTERN.findall(normalized_line)
+                for word in WORD_PATTERN.findall(vocabulary_line)
             )
     letter_counts = [
         (char, count)

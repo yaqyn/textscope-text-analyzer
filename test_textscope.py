@@ -57,6 +57,17 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.vocabulary_percent, 50)
         self.assertEqual(book.character_count, len(self.book.read_text()))
 
+    def test_unicode_numbers_are_not_vocabulary(self):
+        self.book.write_text("² ½ Ⅷ hello²world hello 123", encoding="utf-8")
+        book = analyze_book(self.book)
+        self.assertEqual(book.word_count, 6)
+        self.assertEqual(book.unique_words, 2)
+        self.assertEqual(book.top_words, [
+            {"word": "hello", "count": 2},
+            {"word": "world", "count": 1},
+        ])
+        self.assertEqual(book.vocabulary_percent, 66.67)
+
     def test_filters_do_not_change_totals(self):
         book = analyze_book(self.book, top=1, min_word_length=5, exclude=["HELLO"])
         self.assertEqual(book.top_words, [{"word": "don't", "count": 2}])
