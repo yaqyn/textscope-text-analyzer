@@ -153,6 +153,11 @@ def main(argv=None):
     )
     parser.add_argument("--encoding", default="utf-8")
     parser.add_argument("--top", type=positive_int, default=10)
+    parser.add_argument(
+        "--no-vocabulary",
+        action="store_true",
+        help="Hide ranked vocabulary while preserving all analysis totals",
+    )
     parser.add_argument("--min-word-length", type=positive_int, default=1)
     parser.add_argument(
         "--exclude",
@@ -188,6 +193,8 @@ def main(argv=None):
     )
     parser.add_argument("--spacing", choices=["compact", "roomy"], default="compact")
     args = parser.parse_args(argv)
+    if args.no_vocabulary:
+        args.top = 0
     try:
         for path in args.exclude_file:
             args.exclude.extend(

@@ -53,8 +53,8 @@ def analyze_book(
     Unicode letter tokens with NFC and casefold, treating curly and straight apostrophes
     equivalently. Exclusions affect rankings only, not totals or vocabulary size.
     """
-    if top < 1 or min_word_length < 1 or reading_wpm < 1:
-        raise ValueError("top, minimum word length, and reading speed must be positive")
+    if top < 0 or min_word_length < 1 or reading_wpm < 1:
+        raise ValueError("top must be nonnegative; minimum word length and reading speed must be positive")
     characters, vocabulary = Counter(), Counter()
     word_count = line_count = character_count = 0
     with open(path, encoding=encoding, newline="") as book:

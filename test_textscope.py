@@ -74,6 +74,14 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.word_count, 7)
         self.assertEqual(book.unique_words, 3)
 
+    def test_no_vocabulary_hides_rankings_without_changing_totals(self):
+        with contextlib.redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(main([str(self.book), "--no-vocabulary", "--format", "json"]), 0)
+        result = json.loads(output.getvalue())[0]
+        self.assertEqual(result["top_words"], [])
+        self.assertEqual(result["word_count"], 7)
+        self.assertEqual(result["unique_words"], 3)
+
     def test_empty_book(self):
         self.book.write_text("")
         book = analyze_book(self.book)
