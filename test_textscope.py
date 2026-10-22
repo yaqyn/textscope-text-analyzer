@@ -131,6 +131,13 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.word_count, 2)
         self.assertEqual(analyze_book(self.book, exclude=["cafe\u0301"]).top_words, [])
 
+    def test_vocabulary_keeps_unicode_combining_marks_inside_words(self):
+        self.book.write_text("हिन्दी हिन्दी", encoding="utf-8")
+        self.assertEqual(
+            analyze_book(self.book).top_words,
+            [{"word": "हिन्दी", "count": 2}],
+        )
+
     def test_canonically_equivalent_letters_share_counts(self):
         self.book.write_text("é e\u0301", encoding="utf-8")
         letters = {row["character"]: row["count"] for row in analyze_book(self.book).letters}

@@ -3,11 +3,29 @@
 from collections import Counter
 from dataclasses import asdict, dataclass
 import math
-import re
 import unicodedata
 
-# Vocabulary tokens contain Unicode letters and optional internal apostrophes.
-WORD_PATTERN = re.compile(r"[^\W\d_]+(?:['’][^\W\d_]+)*", re.UNICODE)
+
+def vocabulary_words(text):
+    """Return Unicode words, retaining combining marks and internal apostrophes."""
+    words, current = [], []
+    for char in text:
+        category = unicodedata.category(char)
+        if category.startswith("L") or (current and category.startswith("M")):
+            current.append(char)
+        elif char in "'’" and current and current[-1] not in "'’":
+            current.append(char)
+        else:
+            if current and current[-1] in "'’":
+                current.pop()
+            if current:
+                words.append("".join(current))
+            current = []
+    if current and current[-1] in "'’":
+        current.pop()
+    if current:
+        words.append("".join(current))
+    return words
 
 
 def get_book_count(file_contents):
@@ -72,7 +90,7 @@ def analyze_book(
             )
             vocabulary.update(
                 word.casefold().replace("’", "'")
-                for word in WORD_PATTERN.findall(vocabulary_line)
+                for word in vocabulary_words(vocabulary_line)
             )
     letter_counts = [
         (char, count)
