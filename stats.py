@@ -28,6 +28,11 @@ def vocabulary_words(text):
     return words
 
 
+def vocabulary_length(word):
+    """Measure visible token characters without counting combining marks."""
+    return sum(not unicodedata.category(char).startswith("M") for char in word)
+
+
 def get_book_count(file_contents):
     """Keep the course definition: words are whitespace-separated tokens."""
     return len(file_contents.split())
@@ -105,7 +110,7 @@ def analyze_book(
         (
             (word, count)
             for word, count in vocabulary.items()
-            if len(word) >= min_word_length and word not in excluded
+            if vocabulary_length(word) >= min_word_length and word not in excluded
         ),
         key=lambda item: (-item[1], item[0]),
     )[:top]
