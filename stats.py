@@ -68,7 +68,7 @@ class BookAnalysis:
 
 
 def analyze_book(
-    path, *, encoding="utf-8", top=10, min_word_length=1, exclude=(), reading_wpm=250
+    path, *, encoding="utf-8", top=10, min_word_length=1, max_word_length=None, exclude=(), reading_wpm=250
 ):
     """Read one line at a time; retain character counts and vocabulary frequencies.
 
@@ -76,7 +76,7 @@ def analyze_book(
     Unicode letter tokens with NFC and casefold, treating curly and straight apostrophes
     equivalently. Exclusions affect rankings only, not totals or vocabulary size.
     """
-    if top < 0 or min_word_length < 1 or reading_wpm < 1:
+    if top < 0 or min_word_length < 1 or reading_wpm < 1 or (max_word_length is not None and max_word_length < min_word_length):
         raise ValueError("top must be nonnegative; minimum word length and reading speed must be positive")
     characters, vocabulary = Counter(), Counter()
     word_count = line_count = character_count = 0
@@ -110,7 +110,9 @@ def analyze_book(
         (
             (word, count)
             for word, count in vocabulary.items()
-            if vocabulary_length(word) >= min_word_length and word not in excluded
+            if vocabulary_length(word) >= min_word_length
+            and (max_word_length is None or vocabulary_length(word) <= max_word_length)
+            and word not in excluded
         ),
         key=lambda item: (-item[1], item[0]),
     )[:top]

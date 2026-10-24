@@ -159,6 +159,7 @@ def main(argv=None):
         help="Hide ranked vocabulary while preserving all analysis totals",
     )
     parser.add_argument("--min-word-length", type=positive_int, default=1)
+    parser.add_argument("--max-word-length", type=positive_int)
     parser.add_argument(
         "--exclude",
         action="append",
@@ -195,6 +196,8 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.no_vocabulary:
         args.top = 0
+    if args.max_word_length is not None and args.max_word_length < args.min_word_length:
+        parser.error("--max-word-length must be at least --min-word-length")
     try:
         for path in args.exclude_file:
             args.exclude.extend(
@@ -255,6 +258,7 @@ def main(argv=None):
                     encoding=args.encoding,
                     top=args.top,
                     min_word_length=args.min_word_length,
+                    max_word_length=args.max_word_length,
                     exclude=args.exclude,
                     reading_wpm=args.reading_wpm,
                 )

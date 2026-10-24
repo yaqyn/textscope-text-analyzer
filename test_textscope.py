@@ -74,6 +74,13 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.word_count, 7)
         self.assertEqual(book.unique_words, 3)
 
+    def test_maximum_word_length_filters_rankings(self):
+        book = analyze_book(self.book, max_word_length=4)
+        self.assertEqual(book.top_words, [{"word": "café", "count": 2}])
+        self.assertEqual(book.word_count, 7)
+        with self.assertRaises(ValueError):
+            analyze_book(self.book, min_word_length=5, max_word_length=4)
+
     def test_no_vocabulary_hides_rankings_without_changing_totals(self):
         with contextlib.redirect_stdout(io.StringIO()) as output:
             self.assertEqual(main([str(self.book), "--no-vocabulary", "--format", "json"]), 0)
