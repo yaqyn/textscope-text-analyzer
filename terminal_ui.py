@@ -426,6 +426,8 @@ class TerminalApp:
                     encoding=args.encoding,
                     top=args.top,
                     min_word_length=args.min_word_length,
+                    max_word_length=args.max_word_length,
+                    word_sort=args.word_sort,
                     exclude=args.exclude,
                     reading_wpm=args.reading_wpm,
                 )

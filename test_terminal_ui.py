@@ -73,6 +73,8 @@ class DashboardTests(unittest.TestCase):
             reading_wpm=250,
             top=10,
             min_word_length=1,
+            max_word_length=None,
+            word_sort="frequency",
             encoding="utf-8",
             exclude=[],
         )
@@ -152,6 +154,27 @@ class DashboardTests(unittest.TestCase):
         app.poll()
         self.assertEqual(app.view, "library")
         self.assertIn("Cannot read book", app.message)
+
+    def test_interactive_analysis_honors_vocabulary_options(self):
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "words.txt"
+            path.write_text("zebra zebra zebra dog dog ant hippopotamus", encoding="utf-8")
+            self.args.max_word_length = 5
+            self.args.word_sort = "alphabetical"
+            app = self.app()
+            app.analyze([path], "library")
+            app.future.result(timeout=4)
+            app.poll()
+            self.assertEqual(app.view, "dashboard")
+            self.assertEqual(app.books[0].top_words, [
+                {"word": "ant", "count": 1},
+                {"word": "dog", "count": 2},
+                {"word": "zebra", "count": 3},
+            ])
+            self.assertEqual(app.books[0].word_count, 7)
+            self.assertEqual(app.books[0].unique_words, 4)
 
     def test_native_picker_success_and_cancellation(self):
         from unittest.mock import Mock
