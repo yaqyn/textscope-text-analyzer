@@ -129,6 +129,7 @@ Try the other bundled books:
 | Option | What it controls |
 | --- | --- |
 | `--top N` | Number of ranked words; default 10 |
+| `--word-sort MODE` | Rank vocabulary by `frequency` (default) or `alphabetical` order |
 | `--no-vocabulary` | Hide ranked words while preserving counts, reading time, and other totals |
 | `--min-word-length N` | Minimum length for word rankings; default 1 |
 | `--max-word-length N` | Optional maximum length for word rankings |

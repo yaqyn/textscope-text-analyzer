@@ -74,6 +74,12 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.word_count, 7)
         self.assertEqual(book.unique_words, 3)
 
+    def test_vocabulary_can_be_sorted_alphabetically(self):
+        book = analyze_book(self.book, word_sort="alphabetical")
+        self.assertEqual([row["word"] for row in book.top_words], ["café", "don't", "hello"])
+        with self.assertRaises(ValueError):
+            analyze_book(self.book, word_sort="random")
+
     def test_maximum_word_length_filters_rankings(self):
         book = analyze_book(self.book, max_word_length=4)
         self.assertEqual(book.top_words, [{"word": "café", "count": 2}])

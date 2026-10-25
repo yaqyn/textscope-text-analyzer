@@ -168,6 +168,10 @@ def main(argv=None):
     )
     parser.add_argument("--reading-wpm", type=positive_int, default=250)
     parser.add_argument(
+        "--word-sort", choices=["frequency", "alphabetical"], default="frequency",
+        help="Order the ranked vocabulary by frequency or alphabetically",
+    )
+    parser.add_argument(
         "--exclude-file",
         action="append",
         default=[],
@@ -259,6 +263,7 @@ def main(argv=None):
                     top=args.top,
                     min_word_length=args.min_word_length,
                     max_word_length=args.max_word_length,
+                    word_sort=args.word_sort,
                     exclude=args.exclude,
                     reading_wpm=args.reading_wpm,
                 )
