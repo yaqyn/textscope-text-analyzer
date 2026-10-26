@@ -172,6 +172,10 @@ def main(argv=None):
         help="Order the ranked vocabulary by frequency or alphabetically",
     )
     parser.add_argument(
+        "--word-order", choices=["ascending", "descending"], default="ascending",
+        help="Choose alphabetical direction when --word-sort=alphabetical",
+    )
+    parser.add_argument(
         "--exclude-file",
         action="append",
         default=[],
@@ -264,6 +268,7 @@ def main(argv=None):
                     min_word_length=args.min_word_length,
                     max_word_length=args.max_word_length,
                     word_sort=args.word_sort,
+                    word_order=args.word_order,
                     exclude=args.exclude,
                     reading_wpm=args.reading_wpm,
                 )
