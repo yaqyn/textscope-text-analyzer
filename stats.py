@@ -58,6 +58,7 @@ class BookAnalysis:
     alphabetic_count: int
     line_count: int
     unique_words: int
+    hapax_words: int
     vocabulary_percent: float
     average_word_length: float
     reading_minutes: int
@@ -126,6 +127,7 @@ def analyze_book(
         alphabetic_count=sum(count for _, count in letter_counts),
         line_count=line_count,
         unique_words=len(vocabulary),
+        hapax_words=sum(count == 1 for count in vocabulary.values()),
         vocabulary_percent=round(100 * len(vocabulary) / token_count, 2)
         if token_count
         else 0,
