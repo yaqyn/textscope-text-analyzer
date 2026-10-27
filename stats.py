@@ -59,6 +59,7 @@ class BookAnalysis:
     line_count: int
     unique_words: int
     vocabulary_percent: float
+    average_word_length: float
     reading_minutes: int
     letters: list[dict]
     top_words: list[dict]
@@ -128,6 +129,11 @@ def analyze_book(
         vocabulary_percent=round(100 * len(vocabulary) / token_count, 2)
         if token_count
         else 0,
+        average_word_length=round(
+            sum(vocabulary_length(word) * count for word, count in vocabulary.items())
+            / token_count,
+            2,
+        ) if token_count else 0,
         reading_minutes=math.ceil(word_count / reading_wpm),
         letters=[{"character": char, "count": count} for char, count in letter_counts],
         top_words=[{"word": word, "count": count} for word, count in ranked],
