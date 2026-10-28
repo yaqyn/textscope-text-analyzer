@@ -45,6 +45,7 @@ class TextScopeTests(unittest.TestCase):
         book = analyze_book(self.book)
         self.assertEqual(book.word_count, 7)
         self.assertEqual(book.line_count, 2)
+        self.assertEqual(book.nonempty_line_count, 2)
         self.assertEqual(book.unique_words, 3)
         self.assertEqual(
             book.top_words,
@@ -107,6 +108,7 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.word_count, 0)
         self.assertEqual(book.vocabulary_percent, 0)
         self.assertEqual(book.reading_minutes, 0)
+        self.assertEqual(book.nonempty_line_count, 0)
         self.assertIn("No words match", render_report([book], "text"))
 
     def test_exclusion_files_combine_with_inline_filters(self):
@@ -149,6 +151,12 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.character_count, len(text))
         self.assertEqual(book.word_count, 2)
         self.assertEqual(analyze_book(self.book, exclude=["cafe\u0301"]).top_words, [])
+
+    def test_nonempty_line_count_excludes_whitespace_only_lines(self):
+        self.book.write_text("first\n   \nsecond\n", encoding="utf-8")
+        book = analyze_book(self.book)
+        self.assertEqual(book.line_count, 3)
+        self.assertEqual(book.nonempty_line_count, 2)
 
     def test_vocabulary_keeps_unicode_combining_marks_inside_words(self):
         self.book.write_text("हिन्दी हिन्दी", encoding="utf-8")

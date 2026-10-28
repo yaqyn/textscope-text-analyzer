@@ -53,7 +53,7 @@ def render_text(books):
         lines.extend(
             [
                 "------------ Insights -----------",
-                f"Characters: {book.character_count:,} | Lines: {book.line_count:,}",
+                f"Characters: {book.character_count:,} | Lines: {book.line_count:,} ({book.nonempty_line_count:,} non-empty)",
                 f"Unique vocabulary: {book.unique_words:,} ({book.vocabulary_percent:.2f}% of letter tokens)",
                 f"Estimated reading time: {book.reading_minutes:,} minutes",
                 "------------ Top Words ----------",
@@ -97,6 +97,7 @@ def render_report(books, format):
             "character_count",
             "alphabetic_count",
             "line_count",
+            "nonempty_line_count",
             "unique_words",
             "vocabulary_percent",
             "reading_minutes",
@@ -110,6 +111,7 @@ def render_report(books, format):
                 book.character_count,
                 book.alphabetic_count,
                 book.line_count,
+                book.nonempty_line_count,
                 book.unique_words,
                 book.vocabulary_percent,
                 book.reading_minutes,
