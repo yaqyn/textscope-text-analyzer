@@ -6,6 +6,7 @@ import io
 import json
 import os
 from pathlib import Path
+import stat
 import sys
 import tempfile
 
@@ -125,6 +126,11 @@ def write_output(path, content):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = None
+    existing_mode = None
+    try:
+        existing_mode = stat.S_IMODE(path.stat().st_mode)
+    except FileNotFoundError:
+        pass
     try:
         with tempfile.NamedTemporaryFile(
             mode="w",
@@ -136,6 +142,8 @@ def write_output(path, content):
         ) as report:
             temporary = report.name
             report.write(content)
+        if existing_mode is not None:
+            os.chmod(temporary, existing_mode)
         os.replace(temporary, path)
     finally:
         if temporary and os.path.exists(temporary):

@@ -251,6 +251,13 @@ class TextScopeTests(unittest.TestCase):
             sorted(p.name for p in self.root.iterdir()), ["report.txt", "sample.txt"]
         )
 
+    def test_output_replacement_preserves_file_permissions(self):
+        output = self.root / "report.txt"
+        output.write_text("existing")
+        output.chmod(0o640)
+        write_output(output, "replacement")
+        self.assertEqual(output.stat().st_mode & 0o777, 0o640)
+
     def test_import_has_no_side_effects(self):
         result = subprocess.run(
             ["python3", "-c", "import main"], cwd=ROOT, capture_output=True, text=True
