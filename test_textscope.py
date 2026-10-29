@@ -56,6 +56,7 @@ class TextScopeTests(unittest.TestCase):
             ],
         )
         self.assertEqual(book.vocabulary_percent, 50)
+        self.assertEqual(book.average_word_length, 4.67)
         self.assertEqual(book.character_count, len(self.book.read_text()))
 
     def test_unicode_numbers_are_not_vocabulary(self):
@@ -107,6 +108,7 @@ class TextScopeTests(unittest.TestCase):
         book = analyze_book(self.book)
         self.assertEqual(book.word_count, 0)
         self.assertEqual(book.vocabulary_percent, 0)
+        self.assertEqual(book.average_word_length, 0)
         self.assertEqual(book.reading_minutes, 0)
         self.assertEqual(book.nonempty_line_count, 0)
         self.assertIn("No words match", render_report([book], "text"))
@@ -198,6 +200,7 @@ class TextScopeTests(unittest.TestCase):
         rows = list(csv.DictReader(io.StringIO(render_report(books, "csv"))))
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]["word_count"], "7")
+        self.assertEqual(rows[0]["average_word_length"], "4.67")
         self.assertIn("Comparison", render_report(books, "text"))
 
     def test_missing_file_and_invalid_encoding(self):
