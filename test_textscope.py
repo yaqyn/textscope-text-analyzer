@@ -47,6 +47,7 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.line_count, 2)
         self.assertEqual(book.nonempty_line_count, 2)
         self.assertEqual(book.unique_words, 3)
+        self.assertEqual(book.hapax_words, 0)
         self.assertEqual(
             book.top_words,
             [
@@ -107,6 +108,7 @@ class TextScopeTests(unittest.TestCase):
         self.book.write_text("")
         book = analyze_book(self.book)
         self.assertEqual(book.word_count, 0)
+        self.assertEqual(book.hapax_words, 0)
         self.assertEqual(book.vocabulary_percent, 0)
         self.assertEqual(book.average_word_length, 0)
         self.assertEqual(book.reading_minutes, 0)
@@ -200,6 +202,7 @@ class TextScopeTests(unittest.TestCase):
         rows = list(csv.DictReader(io.StringIO(render_report(books, "csv"))))
         self.assertEqual(len(rows), 2)
         self.assertEqual(rows[0]["word_count"], "7")
+        self.assertEqual(rows[0]["hapax_words"], "0")
         self.assertEqual(rows[0]["average_word_length"], "4.67")
         self.assertIn("Comparison", render_report(books, "text"))
 
