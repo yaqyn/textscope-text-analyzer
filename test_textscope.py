@@ -162,6 +162,12 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.line_count, 3)
         self.assertEqual(book.nonempty_line_count, 2)
 
+    def test_paragraphs_are_separated_by_blank_lines(self):
+        self.book.write_text("First line\ncontinues\n\n  \nSecond paragraph\n", encoding="utf-8")
+        book = analyze_book(self.book)
+        self.assertEqual(book.paragraph_count, 2)
+        self.assertIn("Paragraphs: 2", render_report([book], "text"))
+
     def test_vocabulary_keeps_unicode_combining_marks_inside_words(self):
         self.book.write_text("हिन्दी हिन्दी", encoding="utf-8")
         self.assertEqual(

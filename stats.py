@@ -58,6 +58,7 @@ class BookAnalysis:
     alphabetic_count: int
     line_count: int
     nonempty_line_count: int
+    paragraph_count: int
     unique_words: int
     hapax_words: int
     vocabulary_percent: float
@@ -82,12 +83,16 @@ def analyze_book(
     if top < 0 or min_word_length < 1 or reading_wpm < 1 or word_sort not in {"frequency", "alphabetical"} or word_order not in {"ascending", "descending"} or (max_word_length is not None and max_word_length < min_word_length):
         raise ValueError("top must be nonnegative; minimum word length and reading speed must be positive")
     characters, vocabulary = Counter(), Counter()
-    word_count = line_count = nonempty_line_count = character_count = 0
+    word_count = line_count = nonempty_line_count = character_count = paragraph_count = 0
+    in_paragraph = False
     with open(path, encoding=encoding, newline="") as book:
         for line in book:
             normalized_line = unicodedata.normalize("NFC", line)
             line_count += 1
             nonempty_line_count += bool(line.strip())
+            if line.strip() and not in_paragraph:
+                paragraph_count += 1
+            in_paragraph = bool(line.strip())
             word_count += get_book_count(line)
             character_count += len(line)
             characters.update(normalized_line.lower())
@@ -129,6 +134,7 @@ def analyze_book(
         alphabetic_count=sum(count for _, count in letter_counts),
         line_count=line_count,
         nonempty_line_count=nonempty_line_count,
+        paragraph_count=paragraph_count,
         unique_words=len(vocabulary),
         hapax_words=sum(count == 1 for count in vocabulary.values()),
         vocabulary_percent=round(100 * len(vocabulary) / token_count, 2)
