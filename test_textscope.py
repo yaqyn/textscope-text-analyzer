@@ -58,6 +58,7 @@ class TextScopeTests(unittest.TestCase):
         )
         self.assertEqual(book.vocabulary_percent, 50)
         self.assertEqual(book.average_word_length, 4.67)
+        self.assertEqual(book.median_word_length, 5)
         self.assertEqual(book.character_count, len(self.book.read_text()))
 
     def test_unicode_numbers_are_not_vocabulary(self):
@@ -111,6 +112,7 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.hapax_words, 0)
         self.assertEqual(book.vocabulary_percent, 0)
         self.assertEqual(book.average_word_length, 0)
+        self.assertEqual(book.median_word_length, 0)
         self.assertEqual(book.reading_minutes, 0)
         self.assertEqual(book.nonempty_line_count, 0)
         self.assertIn("No words match", render_report([book], "text"))

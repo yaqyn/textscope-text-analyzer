@@ -58,6 +58,7 @@ def render_text(books):
                 f"Unique vocabulary: {book.unique_words:,} ({book.vocabulary_percent:.2f}% of letter tokens)",
                 f"Words used once: {book.hapax_words:,}",
                 f"Average vocabulary word length: {book.average_word_length:.2f} letters",
+                f"Median vocabulary word length: {book.median_word_length:.2f} letters",
                 f"Estimated reading time: {book.reading_minutes:,} minutes",
                 "------------ Top Words ----------",
             ]
@@ -106,6 +107,7 @@ def render_report(books, format):
             "hapax_words",
             "vocabulary_percent",
             "average_word_length",
+            "median_word_length",
             "reading_minutes",
         ]
     )
@@ -123,6 +125,7 @@ def render_report(books, format):
                 book.hapax_words,
                 book.vocabulary_percent,
                 book.average_word_length,
+                book.median_word_length,
                 book.reading_minutes,
             ]
         )

@@ -63,6 +63,7 @@ class BookAnalysis:
     hapax_words: int
     vocabulary_percent: float
     average_word_length: float
+    median_word_length: float
     reading_minutes: int
     letters: list[dict]
     top_words: list[dict]
@@ -127,6 +128,18 @@ def analyze_book(
         reverse=word_sort == "alphabetical" and word_order == "descending",
     )[:top]
     token_count = sum(vocabulary.values())
+    length_counts = Counter()
+    for word, count in vocabulary.items():
+        length_counts[vocabulary_length(word)] += count
+    middle = ((token_count - 1) // 2, token_count // 2) if token_count else (0, 0)
+    median_values = []
+    seen = 0
+    for length in sorted(length_counts):
+        next_seen = seen + length_counts[length]
+        for position in middle:
+            if seen <= position < next_seen:
+                median_values.append(length)
+        seen = next_seen
     return BookAnalysis(
         path=str(path),
         word_count=word_count,
@@ -145,6 +158,7 @@ def analyze_book(
             / token_count,
             2,
         ) if token_count else 0,
+        median_word_length=round(sum(median_values) / len(median_values), 2) if median_values else 0,
         reading_minutes=math.ceil(word_count / reading_wpm),
         letters=[{"character": char, "count": count} for char, count in letter_counts],
         top_words=[{"word": word, "count": count} for word, count in ranked],
