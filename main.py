@@ -54,7 +54,7 @@ def render_text(books):
         lines.extend(
             [
                 "------------ Insights -----------",
-                f"Characters: {book.character_count:,} | Lines: {book.line_count:,} ({book.nonempty_line_count:,} non-empty) | Paragraphs: {book.paragraph_count:,}",
+                f"Characters: {book.character_count:,} | Lines: {book.line_count:,} ({book.nonempty_line_count:,} non-empty) | Paragraphs: {book.paragraph_count:,} | Sentences: {book.sentence_count:,}",
                 f"Unique vocabulary: {book.unique_words:,} ({book.vocabulary_percent:.2f}% of letter tokens)",
                 f"Words used once: {book.hapax_words:,}",
                 f"Average vocabulary word length: {book.average_word_length:.2f} letters",
@@ -103,6 +103,7 @@ def render_report(books, format):
             "line_count",
             "nonempty_line_count",
             "paragraph_count",
+            "sentence_count",
             "unique_words",
             "hapax_words",
             "vocabulary_percent",
@@ -121,6 +122,7 @@ def render_report(books, format):
                 book.line_count,
                 book.nonempty_line_count,
                 book.paragraph_count,
+                book.sentence_count,
                 book.unique_words,
                 book.hapax_words,
                 book.vocabulary_percent,

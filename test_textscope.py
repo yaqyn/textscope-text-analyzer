@@ -46,6 +46,7 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.word_count, 7)
         self.assertEqual(book.line_count, 2)
         self.assertEqual(book.nonempty_line_count, 2)
+        self.assertEqual(book.sentence_count, 3)
         self.assertEqual(book.unique_words, 3)
         self.assertEqual(book.hapax_words, 0)
         self.assertEqual(
