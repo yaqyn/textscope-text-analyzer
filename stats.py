@@ -3,6 +3,7 @@
 from collections import Counter
 from dataclasses import asdict, dataclass
 import math
+import re
 import unicodedata
 
 
@@ -56,9 +57,11 @@ class BookAnalysis:
     word_count: int
     character_count: int
     alphabetic_count: int
+    numeric_count: int
     line_count: int
     nonempty_line_count: int
     paragraph_count: int
+    sentence_count: int
     unique_words: int
     hapax_words: int
     vocabulary_percent: float
@@ -84,7 +87,7 @@ def analyze_book(
     if top < 0 or min_word_length < 1 or reading_wpm < 1 or word_sort not in {"frequency", "alphabetical"} or word_order not in {"ascending", "descending"} or (max_word_length is not None and max_word_length < min_word_length):
         raise ValueError("top must be nonnegative; minimum word length and reading speed must be positive")
     characters, vocabulary = Counter(), Counter()
-    word_count = line_count = nonempty_line_count = character_count = paragraph_count = 0
+    word_count = line_count = nonempty_line_count = character_count = paragraph_count = sentence_count = 0
     in_paragraph = False
     with open(path, encoding=encoding, newline="") as book:
         for line in book:
@@ -96,6 +99,7 @@ def analyze_book(
             in_paragraph = bool(line.strip())
             word_count += get_book_count(line)
             character_count += len(line)
+            sentence_count += len(re.findall(r"[.!?]+(?:\s|$)", line))
             characters.update(normalized_line.lower())
             # Python's \d omits numeric characters such as ² and ½, while
             # \w includes them. Treat all Unicode number categories as separators.
@@ -145,9 +149,11 @@ def analyze_book(
         word_count=word_count,
         character_count=character_count,
         alphabetic_count=sum(count for _, count in letter_counts),
+        numeric_count=sum(count for char, count in characters.items() if unicodedata.category(char).startswith("N")),
         line_count=line_count,
         nonempty_line_count=nonempty_line_count,
         paragraph_count=paragraph_count,
+        sentence_count=sentence_count,
         unique_words=len(vocabulary),
         hapax_words=sum(count == 1 for count in vocabulary.values()),
         vocabulary_percent=round(100 * len(vocabulary) / token_count, 2)
