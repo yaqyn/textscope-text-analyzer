@@ -57,6 +57,7 @@ class BookAnalysis:
     word_count: int
     character_count: int
     alphabetic_count: int
+    numeric_count: int
     line_count: int
     nonempty_line_count: int
     paragraph_count: int
@@ -148,6 +149,7 @@ def analyze_book(
         word_count=word_count,
         character_count=character_count,
         alphabetic_count=sum(count for _, count in letter_counts),
+        numeric_count=sum(count for char, count in characters.items() if unicodedata.category(char).startswith("N")),
         line_count=line_count,
         nonempty_line_count=nonempty_line_count,
         paragraph_count=paragraph_count,
