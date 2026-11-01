@@ -61,6 +61,7 @@ class BookAnalysis:
     punctuation_count: int
     line_count: int
     nonempty_line_count: int
+    longest_line_length: int
     paragraph_count: int
     sentence_count: int
     unique_words: int
@@ -88,13 +89,14 @@ def analyze_book(
     if top < 0 or min_word_length < 1 or reading_wpm < 1 or word_sort not in {"frequency", "alphabetical"} or word_order not in {"ascending", "descending"} or (max_word_length is not None and max_word_length < min_word_length):
         raise ValueError("top must be nonnegative; minimum word length and reading speed must be positive")
     characters, vocabulary = Counter(), Counter()
-    word_count = line_count = nonempty_line_count = character_count = paragraph_count = sentence_count = 0
+    word_count = line_count = nonempty_line_count = character_count = paragraph_count = sentence_count = longest_line_length = 0
     in_paragraph = False
     with open(path, encoding=encoding, newline="") as book:
         for line in book:
             normalized_line = unicodedata.normalize("NFC", line)
             line_count += 1
             nonempty_line_count += bool(line.strip())
+            longest_line_length = max(longest_line_length, len(line.rstrip("\r\n")))
             if line.strip() and not in_paragraph:
                 paragraph_count += 1
             in_paragraph = bool(line.strip())
@@ -154,6 +156,7 @@ def analyze_book(
         punctuation_count=sum(count for char, count in characters.items() if unicodedata.category(char).startswith("P")),
         line_count=line_count,
         nonempty_line_count=nonempty_line_count,
+        longest_line_length=longest_line_length,
         paragraph_count=paragraph_count,
         sentence_count=sentence_count,
         unique_words=len(vocabulary),

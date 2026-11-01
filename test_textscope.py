@@ -46,6 +46,7 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.word_count, 7)
         self.assertEqual(book.line_count, 2)
         self.assertEqual(book.nonempty_line_count, 2)
+        self.assertEqual(book.longest_line_length, 23)
         self.assertEqual(book.sentence_count, 3)
         self.assertEqual(book.unique_words, 3)
         self.assertEqual(book.hapax_words, 0)
@@ -205,6 +206,7 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.character_count, 8)
         self.assertEqual(book.line_count, 2)
         self.assertEqual(book.word_count, 2)
+        self.assertEqual(book.longest_line_length, 3)
 
     def test_json_and_csv_multiple_books(self):
         books = [analyze_book(self.book), analyze_book(self.book)]

@@ -54,7 +54,7 @@ def render_text(books):
         lines.extend(
             [
                 "------------ Insights -----------",
-                f"Characters: {book.character_count:,} ({book.numeric_count:,} numeric, {book.punctuation_count:,} punctuation) | Lines: {book.line_count:,} ({book.nonempty_line_count:,} non-empty) | Paragraphs: {book.paragraph_count:,} | Sentences: {book.sentence_count:,}",
+                f"Characters: {book.character_count:,} ({book.numeric_count:,} numeric, {book.punctuation_count:,} punctuation) | Lines: {book.line_count:,} ({book.nonempty_line_count:,} non-empty; longest {book.longest_line_length:,}) | Paragraphs: {book.paragraph_count:,} | Sentences: {book.sentence_count:,}",
                 f"Unique vocabulary: {book.unique_words:,} ({book.vocabulary_percent:.2f}% of letter tokens)",
                 f"Words used once: {book.hapax_words:,}",
                 f"Average vocabulary word length: {book.average_word_length:.2f} letters",
@@ -104,6 +104,7 @@ def render_report(books, format):
             "punctuation_count",
             "line_count",
             "nonempty_line_count",
+            "longest_line_length",
             "paragraph_count",
             "sentence_count",
             "unique_words",
@@ -125,6 +126,7 @@ def render_report(books, format):
                 book.punctuation_count,
                 book.line_count,
                 book.nonempty_line_count,
+                book.longest_line_length,
                 book.paragraph_count,
                 book.sentence_count,
                 book.unique_words,
