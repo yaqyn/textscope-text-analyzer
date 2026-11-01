@@ -62,6 +62,7 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.median_word_length, 5)
         self.assertEqual(book.character_count, len(self.book.read_text()))
         self.assertEqual(book.numeric_count, 3)
+        self.assertEqual(book.punctuation_count, 5)
 
     def test_unicode_numbers_are_not_vocabulary(self):
         self.book.write_text("² ½ Ⅷ hello²world hello 123", encoding="utf-8")
