@@ -225,6 +225,14 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(rows[0]["average_word_length"], "4.67")
         self.assertIn("Comparison", render_report(books, "text"))
 
+    def test_multi_book_reports_can_sort_by_word_count(self):
+        shorter = self.root / "shorter.txt"
+        shorter.write_text("one")
+        with contextlib.redirect_stdout(io.StringIO()) as output:
+            self.assertEqual(main([str(shorter), str(self.book), "--sort-books", "words", "--format", "json"]), 0)
+        paths = [row["path"] for row in json.loads(output.getvalue())]
+        self.assertEqual(paths, [str(self.book), str(shorter)])
+
     def test_missing_file_and_invalid_encoding(self):
         for args in [
             [str(self.root / "missing")],

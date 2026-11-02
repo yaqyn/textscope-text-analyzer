@@ -202,6 +202,12 @@ def main(argv=None):
         help="Exit unsuccessfully when any input has no words",
     )
     parser.add_argument(
+        "--sort-books",
+        choices=["input", "name", "words"],
+        default="input",
+        help="Order multi-book reports by input, file name, or descending word count",
+    )
+    parser.add_argument(
         "--word-sort", choices=["frequency", "alphabetical"], default="frequency",
         help="Order the ranked vocabulary by frequency or alphabetically",
     )
@@ -315,6 +321,10 @@ def main(argv=None):
         if empty:
             print("No words found in: " + ", ".join(empty), file=sys.stderr)
             return 1
+    if args.sort_books == "name":
+        books.sort(key=lambda book: (Path(book.path).name.casefold(), book.path))
+    elif args.sort_books == "words":
+        books.sort(key=lambda book: (-book.word_count, book.path))
     try:
         report = render_report(books, args.format)
         if args.output:
