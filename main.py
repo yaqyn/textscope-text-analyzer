@@ -197,6 +197,11 @@ def main(argv=None):
     )
     parser.add_argument("--reading-wpm", type=positive_int, default=250)
     parser.add_argument(
+        "--require-words",
+        action="store_true",
+        help="Exit unsuccessfully when any input has no words",
+    )
+    parser.add_argument(
         "--word-sort", choices=["frequency", "alphabetical"], default="frequency",
         help="Order the ranked vocabulary by frequency or alphabetically",
     )
@@ -304,6 +309,11 @@ def main(argv=None):
             )
         except (OSError, UnicodeError, LookupError) as error:
             print(f"Error reading {path}: {error}", file=sys.stderr)
+            return 1
+    if args.require_words:
+        empty = [book.path for book in books if book.word_count == 0]
+        if empty:
+            print("No words found in: " + ", ".join(empty), file=sys.stderr)
             return 1
     try:
         report = render_report(books, args.format)

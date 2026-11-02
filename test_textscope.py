@@ -121,6 +121,12 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.nonempty_line_count, 0)
         self.assertIn("No words match", render_report([book], "text"))
 
+    def test_require_words_rejects_empty_inputs(self):
+        self.book.write_text("")
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()) as error:
+            self.assertEqual(main([str(self.book), "--require-words"]), 1)
+        self.assertIn(str(self.book), error.getvalue())
+
     def test_exclusion_files_combine_with_inline_filters(self):
         stopwords = self.root / "stopwords.txt"
         stopwords.write_text("# Common greeting\nHELLO\n\n", encoding="utf-8")
