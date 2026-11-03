@@ -2,6 +2,7 @@
 
 from collections import Counter
 from dataclasses import asdict, dataclass
+import gzip
 import math
 import re
 import unicodedata
@@ -91,7 +92,8 @@ def analyze_book(
     characters, vocabulary = Counter(), Counter()
     word_count = line_count = nonempty_line_count = character_count = paragraph_count = sentence_count = longest_line_length = 0
     in_paragraph = False
-    with open(path, encoding=encoding, newline="") as book:
+    opener = gzip.open if str(path).casefold().endswith(".gz") else open
+    with opener(path, mode="rt", encoding=encoding, newline="") as book:
         for line in book:
             normalized_line = unicodedata.normalize("NFC", line)
             line_count += 1

@@ -2,6 +2,7 @@ import contextlib
 import csv
 import io
 import json
+import gzip
 from pathlib import Path
 import subprocess
 import tempfile
@@ -15,6 +16,13 @@ ROOT = Path(__file__).resolve().parent
 
 
 class TextScopeTests(unittest.TestCase):
+    def test_gzip_books_are_analyzed_without_manual_extraction(self):
+        compressed = self.root / "sample.txt.gz"
+        with gzip.open(compressed, "wt", encoding="utf-8", newline="") as book:
+            book.write("one two\nthree")
+        result = analyze_book(compressed)
+        self.assertEqual((result.word_count, result.line_count), (3, 2))
+
     def test_utf8_bom_is_not_part_of_first_excluded_word(self):
         stopwords = self.root / "bom-stopwords.txt"
         stopwords.write_bytes(b"\xef\xbb\xbfhello\n")
