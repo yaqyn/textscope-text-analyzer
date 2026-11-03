@@ -92,6 +92,12 @@ def render_report(books, format):
             json.dumps([book.to_dict() for book in books], indent=2, ensure_ascii=False)
             + "\n"
         )
+    if format == "markdown":
+        lines = ["| Book | Words | Unique | Sentences | Reading time |", "|---|---:|---:|---:|---:|"]
+        for book in books:
+            name = Path(book.path).name.replace("\\", "\\\\").replace("|", "\\|")
+            lines.append(f"| {name} | {book.word_count:,} | {book.unique_words:,} | {book.sentence_count:,} | {book.reading_minutes:,} min |")
+        return "\n".join(lines) + "\n"
     output = io.StringIO(newline="")
     writer = csv.writer(output)
     writer.writerow(
@@ -176,7 +182,7 @@ def main(argv=None):
     parser.add_argument(
         "books", nargs="*", type=Path, help="One or more plain-text files"
     )
-    parser.add_argument("--format", choices=["text", "json", "csv"], default="text")
+    parser.add_argument("--format", choices=["text", "json", "csv", "markdown"], default="text")
     parser.add_argument(
         "--output", type=Path, help="Write a report instead of printing it"
     )

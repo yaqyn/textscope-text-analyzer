@@ -233,6 +233,11 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(rows[0]["average_word_length"], "4.67")
         self.assertIn("Comparison", render_report(books, "text"))
 
+    def test_markdown_report_is_a_compact_summary_table(self):
+        report = render_report([analyze_book(self.book)], "markdown")
+        self.assertIn("| Book | Words | Unique | Sentences | Reading time |", report)
+        self.assertIn("| sample.txt | 7 | 3 | 3 | 1 min |", report)
+
     def test_multi_book_reports_can_sort_by_word_count(self):
         shorter = self.root / "shorter.txt"
         shorter.write_text("one")
