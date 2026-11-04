@@ -99,7 +99,7 @@ def render_report(books, format):
             lines.append(f"| {name} | {book.word_count:,} | {book.unique_words:,} | {book.sentence_count:,} | {book.reading_minutes:,} min |")
         return "\n".join(lines) + "\n"
     output = io.StringIO(newline="")
-    writer = csv.writer(output)
+    writer = csv.writer(output, delimiter="\t" if format == "tsv" else ",")
     writer.writerow(
         [
             "path",
@@ -182,7 +182,7 @@ def main(argv=None):
     parser.add_argument(
         "books", nargs="*", type=Path, help="One or more plain-text files"
     )
-    parser.add_argument("--format", choices=["text", "json", "csv", "markdown"], default="text")
+    parser.add_argument("--format", choices=["text", "json", "csv", "tsv", "markdown"], default="text")
     parser.add_argument(
         "--output", type=Path, help="Write a report instead of printing it"
     )

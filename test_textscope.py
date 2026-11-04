@@ -233,6 +233,11 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(rows[0]["average_word_length"], "4.67")
         self.assertIn("Comparison", render_report(books, "text"))
 
+    def test_tsv_report_is_tab_delimited(self):
+        rows = list(csv.reader(io.StringIO(render_report([analyze_book(self.book)], "tsv")), delimiter="\t"))
+        self.assertEqual(rows[0][:2], ["path", "word_count"])
+        self.assertEqual(rows[1][1], "7")
+
     def test_markdown_report_is_a_compact_summary_table(self):
         report = render_report([analyze_book(self.book)], "markdown")
         self.assertIn("| Book | Words | Unique | Sentences | Reading time |", report)
