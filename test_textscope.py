@@ -135,6 +135,13 @@ class TextScopeTests(unittest.TestCase):
             self.assertEqual(main([str(self.book), "--require-words"]), 1)
         self.assertIn(str(self.book), error.getvalue())
 
+    def test_max_words_rejects_oversized_inputs(self):
+        with contextlib.redirect_stderr(io.StringIO()) as error:
+            self.assertEqual(main([str(self.book), "--max-words", "6"]), 1)
+        self.assertIn("Word limit exceeded", error.getvalue())
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(main([str(self.book), "--max-words", "7"]), 0)
+
     def test_exclusion_files_combine_with_inline_filters(self):
         stopwords = self.root / "stopwords.txt"
         stopwords.write_text("# Common greeting\nHELLO\n\n", encoding="utf-8")
