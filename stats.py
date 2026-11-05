@@ -4,6 +4,7 @@ from collections import Counter
 from dataclasses import asdict, dataclass
 import gzip
 import math
+import os
 import re
 import unicodedata
 
@@ -57,6 +58,7 @@ class BookAnalysis:
     path: str
     word_count: int
     character_count: int
+    source_bytes: int
     alphabetic_count: int
     numeric_count: int
     punctuation_count: int
@@ -153,6 +155,7 @@ def analyze_book(
         path=str(path),
         word_count=word_count,
         character_count=character_count,
+        source_bytes=os.path.getsize(path),
         alphabetic_count=sum(count for _, count in letter_counts),
         numeric_count=sum(count for char, count in characters.items() if unicodedata.category(char).startswith("N")),
         punctuation_count=sum(count for char, count in characters.items() if unicodedata.category(char).startswith("P")),

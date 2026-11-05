@@ -229,6 +229,12 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.word_count, 2)
         self.assertEqual(book.longest_line_length, 3)
 
+    def test_analysis_reports_the_source_file_size(self):
+        self.book.write_text("é", encoding="utf-8")
+        book = analyze_book(self.book)
+        self.assertEqual(book.character_count, 1)
+        self.assertEqual(book.source_bytes, 2)
+
     def test_json_and_csv_multiple_books(self):
         books = [analyze_book(self.book), analyze_book(self.book)]
         parsed = json.loads(render_report(books, "json"))
