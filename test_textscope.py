@@ -235,6 +235,12 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.character_count, 1)
         self.assertEqual(book.source_bytes, 2)
 
+    def test_analysis_counts_unicode_whitespace(self):
+        self.book.write_text("one\ttwo\u2003three\n", encoding="utf-8")
+        book = analyze_book(self.book)
+        self.assertEqual(book.whitespace_count, 3)
+        self.assertEqual(json.loads(render_report([book], "json"))[0]["whitespace_count"], 3)
+
     def test_json_and_csv_multiple_books(self):
         books = [analyze_book(self.book), analyze_book(self.book)]
         parsed = json.loads(render_report(books, "json"))

@@ -59,6 +59,7 @@ class BookAnalysis:
     word_count: int
     character_count: int
     source_bytes: int
+    whitespace_count: int
     alphabetic_count: int
     numeric_count: int
     punctuation_count: int
@@ -156,6 +157,7 @@ def analyze_book(
         word_count=word_count,
         character_count=character_count,
         source_bytes=os.path.getsize(path),
+        whitespace_count=sum(count for char, count in characters.items() if char.isspace()),
         alphabetic_count=sum(count for _, count in letter_counts),
         numeric_count=sum(count for char, count in characters.items() if unicodedata.category(char).startswith("N")),
         punctuation_count=sum(count for char, count in characters.items() if unicodedata.category(char).startswith("P")),
