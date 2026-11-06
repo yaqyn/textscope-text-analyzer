@@ -3,6 +3,7 @@ import csv
 import io
 import json
 import gzip
+import hashlib
 from pathlib import Path
 import subprocess
 import tempfile
@@ -247,6 +248,16 @@ class TextScopeTests(unittest.TestCase):
         book = analyze_book(self.book)
         self.assertEqual(book.character_count, 1)
         self.assertEqual(book.source_bytes, 2)
+
+    def test_analysis_fingerprints_exact_source_bytes(self):
+        source = "café\n".encode("utf-8")
+        self.book.write_bytes(source)
+        book = analyze_book(self.book)
+        self.assertEqual(book.source_sha256, hashlib.sha256(source).hexdigest())
+        rendered = json.loads(render_report([book], "json"))[0]
+        self.assertEqual(rendered["source_sha256"], book.source_sha256)
+        csv_row = next(csv.DictReader(io.StringIO(render_report([book], "csv"))))
+        self.assertEqual(csv_row["source_sha256"], book.source_sha256)
 
     def test_analysis_counts_unicode_whitespace(self):
         self.book.write_text("one\ttwo\u2003three\n", encoding="utf-8")

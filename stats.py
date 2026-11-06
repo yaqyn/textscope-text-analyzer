@@ -3,6 +3,7 @@
 from collections import Counter
 from dataclasses import asdict, dataclass
 import gzip
+import hashlib
 import math
 import os
 import re
@@ -56,6 +57,7 @@ def chars_dict_sorted_list(letters_dict):
 @dataclass
 class BookAnalysis:
     path: str
+    source_sha256: str
     word_count: int
     character_count: int
     source_bytes: int
@@ -96,6 +98,10 @@ def analyze_book(
     word_count = line_count = nonempty_line_count = character_count = paragraph_count = sentence_count = longest_line_length = 0
     in_paragraph = False
     opener = gzip.open if str(path).casefold().endswith(".gz") else open
+    digest = hashlib.sha256()
+    with open(path, "rb") as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            digest.update(chunk)
     with opener(path, mode="rt", encoding=encoding, newline="") as book:
         for line in book:
             normalized_line = unicodedata.normalize("NFC", line)
@@ -154,6 +160,7 @@ def analyze_book(
         seen = next_seen
     return BookAnalysis(
         path=str(path),
+        source_sha256=digest.hexdigest(),
         word_count=word_count,
         character_count=character_count,
         source_bytes=os.path.getsize(path),
