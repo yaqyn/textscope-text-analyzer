@@ -142,6 +142,19 @@ class TextScopeTests(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(main([str(self.book), "--max-words", "7"]), 0)
 
+    def test_min_words_rejects_undersized_inputs_without_writing(self):
+        output = self.root / "report.json"
+        output.write_text("existing", encoding="utf-8")
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()) as error:
+            self.assertEqual(
+                main([str(self.book), "--min-words", "8", "--format", "json", "--output", str(output)]),
+                1,
+            )
+        self.assertIn("Minimum word count not met", error.getvalue())
+        self.assertEqual(output.read_text(encoding="utf-8"), "existing")
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(main([str(self.book), "--min-words", "7"]), 0)
+
     def test_exclusion_files_combine_with_inline_filters(self):
         stopwords = self.root / "stopwords.txt"
         stopwords.write_text("# Common greeting\nHELLO\n\n", encoding="utf-8")

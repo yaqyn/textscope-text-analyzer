@@ -216,6 +216,10 @@ def main(argv=None):
         help="Exit unsuccessfully when any input exceeds this word count",
     )
     parser.add_argument(
+        "--min-words", type=positive_int,
+        help="Exit unsuccessfully when any input is shorter than this word count",
+    )
+    parser.add_argument(
         "--sort-books",
         choices=["input", "name", "words"],
         default="input",
@@ -339,6 +343,11 @@ def main(argv=None):
         oversized = [book.path for book in books if book.word_count > args.max_words]
         if oversized:
             print("Word limit exceeded in: " + ", ".join(oversized), file=sys.stderr)
+            return 1
+    if args.min_words is not None:
+        undersized = [book.path for book in books if book.word_count < args.min_words]
+        if undersized:
+            print("Minimum word count not met in: " + ", ".join(undersized), file=sys.stderr)
             return 1
     if args.sort_books == "name":
         books.sort(key=lambda book: (Path(book.path).name.casefold(), book.path))
