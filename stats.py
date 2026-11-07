@@ -10,6 +10,9 @@ import re
 import unicodedata
 
 
+SENTENCE_END = re.compile(r"[.!?。！？…]+(?:[\"'’”»)}\]]+)?(?=\s|$)")
+
+
 class _DigestReader(io.RawIOBase):
     """Count and fingerprint the exact bytes consumed by a text reader."""
 
@@ -138,7 +141,7 @@ def analyze_book(
             in_paragraph = bool(line.strip())
             word_count += get_book_count(line)
             character_count += len(line)
-            sentence_count += len(re.findall(r"[.!?]+(?:\s|$)", line))
+            sentence_count += len(SENTENCE_END.findall(line))
             characters.update(normalized_line.lower())
             # Python's \d omits numeric characters such as ² and ½, while
             # \w includes them. Treat all Unicode number categories as separators.

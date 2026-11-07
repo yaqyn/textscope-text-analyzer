@@ -74,6 +74,13 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.numeric_count, 3)
         self.assertEqual(book.punctuation_count, 5)
 
+    def test_sentence_count_accepts_closing_quotes_and_unicode_endings(self):
+        self.book.write_text(
+            '“Hello!” “Really?” 你好。 Wait…\n', encoding='utf-8'
+        )
+        book = analyze_book(self.book)
+        self.assertEqual(book.sentence_count, 4)
+
     def test_unicode_numbers_are_not_vocabulary(self):
         self.book.write_text("² ½ Ⅷ hello²world hello 123", encoding="utf-8")
         book = analyze_book(self.book)
