@@ -259,6 +259,26 @@ class TextScopeTests(unittest.TestCase):
         csv_row = next(csv.DictReader(io.StringIO(render_report([book], "csv"))))
         self.assertEqual(csv_row["source_sha256"], book.source_sha256)
 
+    def test_analysis_reads_source_once_for_counts_and_fingerprint(self):
+        source = "one two café\n".encode("utf-8")
+        self.book.write_bytes(source)
+        with patch("stats.open", wraps=open) as opened:
+            book = analyze_book(self.book)
+        self.assertEqual(opened.call_count, 1)
+        self.assertEqual(book.word_count, 3)
+        self.assertEqual(book.source_bytes, len(source))
+        self.assertEqual(book.source_sha256, hashlib.sha256(source).hexdigest())
+
+    def test_compressed_source_metrics_use_consumed_archive_bytes(self):
+        compressed = self.root / "measured.txt.gz"
+        with gzip.open(compressed, "wt", encoding="utf-8") as book:
+            book.write("one two three")
+        source = compressed.read_bytes()
+        result = analyze_book(compressed)
+        self.assertEqual(result.word_count, 3)
+        self.assertEqual(result.source_bytes, len(source))
+        self.assertEqual(result.source_sha256, hashlib.sha256(source).hexdigest())
+
     def test_analysis_counts_unicode_whitespace(self):
         self.book.write_text("one\ttwo\u2003three\n", encoding="utf-8")
         book = analyze_book(self.book)

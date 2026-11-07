@@ -4,10 +4,31 @@ from collections import Counter
 from dataclasses import asdict, dataclass
 import gzip
 import hashlib
+import io
 import math
-import os
 import re
 import unicodedata
+
+
+class _DigestReader(io.RawIOBase):
+    """Count and fingerprint the exact bytes consumed by a text reader."""
+
+    def __init__(self, source, digest):
+        self.source = source
+        self.digest = digest
+        self.bytes_read = 0
+
+    def readable(self):
+        return True
+
+    def readinto(self, buffer):
+        chunk = self.source.read(len(buffer))
+        size = len(chunk)
+        if size:
+            buffer[:size] = chunk
+            self.digest.update(chunk)
+            self.bytes_read += size
+        return size
 
 
 def vocabulary_words(text):
@@ -97,12 +118,16 @@ def analyze_book(
     characters, vocabulary = Counter(), Counter()
     word_count = line_count = nonempty_line_count = character_count = paragraph_count = sentence_count = longest_line_length = 0
     in_paragraph = False
-    opener = gzip.open if str(path).casefold().endswith(".gz") else open
     digest = hashlib.sha256()
     with open(path, "rb") as source:
-        for chunk in iter(lambda: source.read(1024 * 1024), b""):
-            digest.update(chunk)
-    with opener(path, mode="rt", encoding=encoding, newline="") as book:
+        digested = _DigestReader(source, digest)
+        buffered = io.BufferedReader(digested)
+        binary_book = (
+            gzip.GzipFile(fileobj=buffered)
+            if str(path).casefold().endswith(".gz")
+            else buffered
+        )
+        book = io.TextIOWrapper(binary_book, encoding=encoding, newline="")
         for line in book:
             normalized_line = unicodedata.normalize("NFC", line)
             line_count += 1
@@ -125,6 +150,8 @@ def analyze_book(
                 word.casefold().replace("’", "'")
                 for word in vocabulary_words(vocabulary_line)
             )
+        book.close()
+        source_bytes = digested.bytes_read
     letter_counts = [
         (char, count)
         for char, count in chars_dict_sorted_list(characters)
@@ -163,7 +190,7 @@ def analyze_book(
         source_sha256=digest.hexdigest(),
         word_count=word_count,
         character_count=character_count,
-        source_bytes=os.path.getsize(path),
+        source_bytes=source_bytes,
         whitespace_count=sum(count for char, count in characters.items() if char.isspace()),
         alphabetic_count=sum(count for _, count in letter_counts),
         numeric_count=sum(count for char, count in characters.items() if unicodedata.category(char).startswith("N")),
