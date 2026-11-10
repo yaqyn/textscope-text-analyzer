@@ -276,6 +276,26 @@ class TextScopeTests(unittest.TestCase):
         self.assertEqual(book.source_bytes, len(source))
         self.assertEqual(book.source_sha256, hashlib.sha256(source).hexdigest())
 
+    def test_truncated_gzip_is_reported_as_a_read_error(self):
+        compressed = self.root / "truncated.txt.gz"
+        compressed.write_bytes(gzip.compress(b"one two three")[:-4])
+        with self.assertRaises(OSError):
+            analyze_book(compressed)
+        with contextlib.redirect_stderr(io.StringIO()) as error:
+            self.assertEqual(main([str(compressed)]), 1)
+        self.assertIn("Error reading", error.getvalue())
+
+    def test_corrupt_gzip_is_reported_as_a_read_error(self):
+        compressed = self.root / "corrupt.txt.gz"
+        payload = bytearray(gzip.compress(b"hello world " * 500))
+        payload[15] ^= 0xFF
+        compressed.write_bytes(payload)
+        with self.assertRaises(OSError):
+            analyze_book(compressed)
+        with contextlib.redirect_stderr(io.StringIO()) as error:
+            self.assertEqual(main([str(compressed)]), 1)
+        self.assertIn("Error reading", error.getvalue())
+
     def test_compressed_source_metrics_use_consumed_archive_bytes(self):
         compressed = self.root / "measured.txt.gz"
         with gzip.open(compressed, "wt", encoding="utf-8") as book:
