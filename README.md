@@ -156,6 +156,8 @@ Try the other bundled books:
 
 JSON always contains a list of book analyses, including letter counts and top words. CSV contains one summary row per book. Multiple-book text reports include a comparison table. The file is streamed by line; memory use grows with distinct vocabulary and the longest line rather than the full book.
 
+Compressed `.gz` books are analyzed directly. Truncated or corrupt archives return status 1 with a concise read error instead of a traceback.
+
 Input and output encoding failures return status 1 with a concise error; invalid CLI arguments return status 2. Use `--encoding` when a text file is not UTF-8. Every input must succeed before a report is written. Reports are replaced atomically, and the CLI rejects using an input book or exclusion file as the output path.
 
 ## <img src="readme-assets/icons/architecture.svg" width="24" height="24" alt=""> Architecture
