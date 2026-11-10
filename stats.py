@@ -8,6 +8,7 @@ import io
 import math
 import re
 import unicodedata
+import zlib
 
 
 SENTENCE_END = re.compile(r"[.!?。！？…]+(?:[\"'’”»)}\]]+)?(?=\s|$)")
@@ -122,39 +123,44 @@ def analyze_book(
     word_count = line_count = nonempty_line_count = character_count = paragraph_count = sentence_count = longest_line_length = 0
     in_paragraph = False
     digest = hashlib.sha256()
-    with open(path, "rb") as source:
-        digested = _DigestReader(source, digest)
-        buffered = io.BufferedReader(digested)
-        binary_book = (
-            gzip.GzipFile(fileobj=buffered)
-            if str(path).casefold().endswith(".gz")
-            else buffered
-        )
-        book = io.TextIOWrapper(binary_book, encoding=encoding, newline="")
-        for line in book:
-            normalized_line = unicodedata.normalize("NFC", line)
-            line_count += 1
-            nonempty_line_count += bool(line.strip())
-            longest_line_length = max(longest_line_length, len(line.rstrip("\r\n")))
-            if line.strip() and not in_paragraph:
-                paragraph_count += 1
-            in_paragraph = bool(line.strip())
-            word_count += get_book_count(line)
-            character_count += len(line)
-            sentence_count += len(SENTENCE_END.findall(line))
-            characters.update(normalized_line.lower())
-            # Python's \d omits numeric characters such as ² and ½, while
-            # \w includes them. Treat all Unicode number categories as separators.
-            vocabulary_line = "".join(
-                " " if unicodedata.category(char).startswith("N") else char
-                for char in normalized_line
+    try:
+        with open(path, "rb") as source:
+            digested = _DigestReader(source, digest)
+            buffered = io.BufferedReader(digested)
+            binary_book = (
+                gzip.GzipFile(fileobj=buffered)
+                if str(path).casefold().endswith(".gz")
+                else buffered
             )
-            vocabulary.update(
-                word.casefold().replace("’", "'")
-                for word in vocabulary_words(vocabulary_line)
-            )
-        book.close()
-        source_bytes = digested.bytes_read
+            book = io.TextIOWrapper(binary_book, encoding=encoding, newline="")
+            try:
+                for line in book:
+                    normalized_line = unicodedata.normalize("NFC", line)
+                    line_count += 1
+                    nonempty_line_count += bool(line.strip())
+                    longest_line_length = max(longest_line_length, len(line.rstrip("\r\n")))
+                    if line.strip() and not in_paragraph:
+                        paragraph_count += 1
+                    in_paragraph = bool(line.strip())
+                    word_count += get_book_count(line)
+                    character_count += len(line)
+                    sentence_count += len(SENTENCE_END.findall(line))
+                    characters.update(normalized_line.lower())
+                    # Python's \d omits numeric characters such as ² and ½, while
+                    # \w includes them. Treat all Unicode number categories as separators.
+                    vocabulary_line = "".join(
+                        " " if unicodedata.category(char).startswith("N") else char
+                        for char in normalized_line
+                    )
+                    vocabulary.update(
+                        word.casefold().replace("’", "'")
+                        for word in vocabulary_words(vocabulary_line)
+                    )
+            finally:
+                book.close()
+            source_bytes = digested.bytes_read
+    except (EOFError, zlib.error) as error:
+        raise OSError(f"compressed input is corrupt or truncated: {error}") from error
     letter_counts = [
         (char, count)
         for char, count in chars_dict_sorted_list(characters)
