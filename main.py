@@ -9,8 +9,19 @@ from pathlib import Path
 import stat
 import sys
 import tempfile
+import unicodedata
 
 from stats import analyze_book, get_book_count, get_book_dict, chars_dict_sorted_list
+
+
+def safe_display_text(value):
+    """Render untrusted paths without terminal control characters."""
+    return "".join(
+        char
+        if not unicodedata.category(char).startswith("C")
+        else "?"
+        for char in str(value)
+    )
 
 
 def get_book_text(path, encoding="utf-8"):
@@ -21,7 +32,7 @@ def get_book_text(path, encoding="utf-8"):
 def print_report(book_path, wc, letters_sort):
     """Retain the original course report helper."""
     print(
-        f"============ TEXTSCOPE ============\nAnalyzing book found at {book_path}..."
+        f"============ TEXTSCOPE ============\nAnalyzing book found at {safe_display_text(book_path)}..."
     )
     print(f"----------- Word Count ----------\nFound {wc} total words")
     print("--------- Character Count -------")
@@ -43,7 +54,7 @@ def render_text(books):
     for book in books:
         lines = [
             "============ TEXTSCOPE ============",
-            f"Analyzing book found at {book.path}...",
+            f"Analyzing book found at {safe_display_text(book.path)}...",
             "----------- Word Count ----------",
             f"Found {book.word_count} total words",
             "--------- Character Count -------",
@@ -77,8 +88,9 @@ def render_text(books):
             f"{'Book':<32} {'Words':>10} {'Unique':>10} {'Minutes':>10}",
         ]
         for book in books:
+            name = safe_display_text(Path(book.path).name)
             lines.append(
-                f"{Path(book.path).name:<32} {book.word_count:>10,} {book.unique_words:>10,} {book.reading_minutes:>10,}"
+                f"{name:<32} {book.word_count:>10,} {book.unique_words:>10,} {book.reading_minutes:>10,}"
             )
         reports.append("\n".join(lines))
     return "\n\n".join(reports) + "\n"
@@ -95,7 +107,7 @@ def render_report(books, format):
     if format == "markdown":
         lines = ["| Book | Words | Unique | Sentences | Reading time |", "|---|---:|---:|---:|---:|"]
         for book in books:
-            name = Path(book.path).name.replace("\\", "\\\\").replace("|", "\\|")
+            name = safe_display_text(Path(book.path).name).replace("\\", "\\\\").replace("|", "\\|")
             lines.append(f"| {name} | {book.word_count:,} | {book.unique_words:,} | {book.sentence_count:,} | {book.reading_minutes:,} min |")
         return "\n".join(lines) + "\n"
     output = io.StringIO(newline="")
