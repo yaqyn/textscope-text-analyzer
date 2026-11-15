@@ -163,6 +163,15 @@ class TextScopeTests(unittest.TestCase):
         with contextlib.redirect_stdout(io.StringIO()):
             self.assertEqual(main([str(self.book), "--min-words", "7"]), 0)
 
+    def test_word_count_limits_reject_an_impossible_range(self):
+        with (
+            contextlib.redirect_stderr(io.StringIO()) as error,
+            self.assertRaises(SystemExit) as result,
+        ):
+            main([str(self.book), "--min-words", "8", "--max-words", "7"])
+        self.assertEqual(result.exception.code, 2)
+        self.assertIn("--max-words must be at least --min-words", error.getvalue())
+
     def test_exclusion_files_combine_with_inline_filters(self):
         stopwords = self.root / "stopwords.txt"
         stopwords.write_text("# Common greeting\nHELLO\n\n", encoding="utf-8")

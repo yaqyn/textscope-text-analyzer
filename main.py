@@ -266,6 +266,12 @@ def main(argv=None):
         args.top = 0
     if args.max_word_length is not None and args.max_word_length < args.min_word_length:
         parser.error("--max-word-length must be at least --min-word-length")
+    if (
+        args.min_words is not None
+        and args.max_words is not None
+        and args.min_words > args.max_words
+    ):
+        parser.error("--max-words must be at least --min-words")
     try:
         for path in args.exclude_file:
             args.exclude.extend(
