@@ -342,6 +342,15 @@ class TextScopeTests(unittest.TestCase):
         self.assertIn("| Book | Words | Unique | Sentences | Reading time |", report)
         self.assertIn("| sample.txt | 7 | 3 | 3 | 1 min |", report)
 
+    def test_readable_reports_neutralize_filename_controls(self):
+        book = analyze_book(self.book)
+        book.path = "unsafe\x1b[31m\nbook|name.txt"
+        text_report = render_report([book], "text")
+        markdown_report = render_report([book], "markdown")
+        self.assertNotIn("\x1b", text_report + markdown_report)
+        self.assertIn("unsafe?[31m?book|name.txt", text_report)
+        self.assertIn("unsafe?[31m?book\\|name.txt", markdown_report)
+
     def test_multi_book_reports_can_sort_by_word_count(self):
         shorter = self.root / "shorter.txt"
         shorter.write_text("one")
